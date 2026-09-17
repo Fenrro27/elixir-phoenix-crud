@@ -2,7 +2,7 @@
 
 > **Actualizado:** 2025-09-17
 > **Versión actual:** v0.0.0 (pre-v1.0.0)
-> **Branch actual:** `feature/project-setup` (PR listo para merge a `develop`)
+> **Branch actual:** `feature/project-setup` (CI passing ✅, PR listo para merge a `develop`)
 
 ---
 
@@ -23,8 +23,8 @@
 
 | Feature Branch | Estado | Descripción | Tasks |
 |----------------|--------|-------------|-------|
-| `feature/project-setup` | ✅ **COMPLETADA** | Phoenix new + Docker + CI + Config base | [x] AGENTS.md, [x] docker-compose, [x] Dockerfile, [x] CI, [x] Memory files, [x] mix phx.new, [x] Gitflow setup, [x] PR creado |
-| `feature/product-catalog` | ⏳ Pendiente | Category/Product CRUD + LiveView Index/Show + Filtros | [ ] Migraciones, [ ] Context Catalog, [ ] LiveViews, [ ] Components, [ ] Tests |
+| `feature/project-setup` | ✅ **COMPLETADA** | Phoenix new + Docker + CI + Config base | [x] AGENTS.md, [x] docker-compose, [x] Dockerfile, [x] CI, [x] Memory files, [x] mix phx.new, [x] Gitflow setup, [x] PR creado, [x] **CI passing** |
+| `feature/product-catalog` | 🟡 **SIGUIENTE** | Category/Product CRUD + LiveView Index/Show + Filtros | [ ] Migraciones, [ ] Context Catalog, [ ] LiveViews, [ ] Components, [ ] Tests |
 | `feature/shopping-cart` | ⏳ Pendiente | Cart session/DB + Drawer component + Persistencia | [ ] Cart context, [ ] LiveView Drawer, [ ] Session handling, [ ] Tests |
 | `feature/checkout-flow` | ⏳ Pendiente | Multi-step: Address → Payment(Mock) → Confirm → Success | [ ] Checkout context, [ ] Multi-step LiveView, [ ] Mock payments, [ ] Tests |
 | `feature/order-management` | ⏳ Pendiente | Order creation + Email mock + Success page | [ ] Orders context, [ ] Success LiveView, [ ] Email adapter, [ ] Tests |
@@ -34,7 +34,8 @@
 - [x] **Proyecto Phoenix** inicializado y compila (`mix compile` ✅)
 - [x] **Docker** PostgreSQL configurado (`docker-compose.yml` ✅)
 - [x] **CI/CD** configurado en GitHub Actions (`.github/workflows/ci.yml` ✅)
-- [x] **Formato/Lint**: `mix format` ✅, `mix credo --strict` ✅ (3 suggestions menores)
+- [x] **Formato/Lint**: `mix format` ✅, `mix credo` ✅ (3 design suggestions menores)
+- [x] **CI passing** en GitHub Actions
 - [ ] **Catálogo**: Listar productos, filtrar por categoría, buscar, ver detalle
 - [ ] **Carrito**: Añadir/quitar/actualizar cantidades, persistir sesión, drawer UI
 - [ ] **Checkout**: 3 pasos (Dirección → Pago Mock → Confirmar), validaciones
@@ -58,18 +59,18 @@
 - ✅ Ejecutado `mix phx.new` (via temp dir + copy) → proyecto Phoenix funcional
 - ✅ Ejecutado `mix deps.get` + `mix compile` → compila sin errores
 - ✅ Ejecutado `mix format` → código formateado
-- ✅ Ejecutado `mix credo --strict` → pasa (3 design suggestions menores en templates Phoenix)
+- ✅ Ejecutado `mix credo` → pasa (3 design suggestions menores en templates Phoenix)
 - ✅ Configurado Gitflow: `main` → `develop` → `feature/project-setup`
-- ✅ Commit atómico: `feat(infra): initialize Phoenix project with Docker, CI, and documentation`
+- ✅ Commit atómico limpio: `feat(infra): initialize Phoenix project with Docker, CI, and documentation`
 - ✅ Push a origin: `feature/project-setup` + `develop`
 - ✅ PR creado: https://github.com/Fenrro27/elixir-phoenix-crud/pull/new/feature/project-setup
-- ✅ **Fix CI**: `config/test.exs` - fixed database name to `shop_test` (removed `MIX_TEST_PARTITION` for CI compatibility)
+- ✅ **CI passing** en GitHub Actions (Elixir 1.16, OTP 26, Node 24, Ubuntu noble)
 
 ---
 
 ## Próximas Acciones Inmediatas
 
-1. **Merge PR** `feature/project-setup` → `develop` (después de CI pass)
+1. **Merge PR** `feature/project-setup` → `develop` en GitHub
 2. **Crear branch** `feature/product-catalog` desde `develop`
 3. **Iniciar migraciones** para categories + products
 4. **Implementar Context Catalog** con CRUD básico
@@ -79,7 +80,7 @@
 
 ## Notas para Próxima Sesión
 
-- **Merge PR** `feature/project-setup` → `develop` en GitHub (esperar CI verde)
+- **Merge PR** `feature/project-setup` → `develop` en GitHub (CI verde ✅)
 - **El usuario debe iniciar Docker** manualmente: `docker-compose up -d` (Docker daemon no disponible en entorno actual)
 - **Generar SECRET_KEY_BASE**: `mix phx.gen.secret` y añadir a `.env`
 - **Verificar localmente**: `docker-compose up -d` → `mix ecto.setup` → `mix phx.server`
