@@ -1,20 +1,18 @@
-# elixir-phoenix-crud
+# Shop
 
-## 📖 Sobre el Proyecto
-Este repositorio contiene mi primera aplicación web desarrollada con Elixir y Phoenix Framework. Es un proyecto de aprendizaje creado para entender los fundamentos de la programación funcional y el ciclo de vida de una aplicación web tradicional dentro de este ecosistema.
+To start your Phoenix server:
 
-El objetivo principal ha sido construir un sistema CRUD (Crear, Leer, Actualizar, Borrar) básico y funcional, asimilando los conceptos clave paso a paso y priorizando la arquitectura estándar de Phoenix.
+  * Run `mix setup` to install and setup dependencies
+  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
-## 🗺️ Ruta de Aprendizaje
-Durante el desarrollo de este proyecto, he enfocado mi estudio en las siguientes áreas fundamentales:
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-*   **Fundamentos de Elixir:** Inmutabilidad, *Pattern Matching* y el uso del Pipe Operator (`|>`).
-*   **Bases de Datos con Ecto:** Creación de *Schemas*, migraciones en PostgreSQL y validación de datos mediante *Changesets*.
-*   **Ciclo Web en Phoenix:** Configuración de rutas (*Router*), creación de Controladores y manejo de peticiones HTTP.
-*   **Interfaz de Usuario:** Renderizado de plantillas HTML utilizando HEEx y manejo de formularios para el ingreso de datos.
+Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
-## 🛠️ Tecnologías Utilizadas
-*   **Lenguaje:** Elixir
-*   **Framework Web:** Phoenix
-*   **Base de Datos:** PostgreSQL
-*   **Capa de Datos:** Ecto
+## Learn more
+
+  * Official website: https://www.phoenixframework.org/
+  * Guides: https://hexdocs.pm/phoenix/overview.html
+  * Docs: https://hexdocs.pm/phoenix
+  * Forum: https://elixirforum.com/c/phoenix-forum
+  * Source: https://github.com/phoenixframework/phoenix

@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  MIX_ENV: test
+  DATABASE_URL: ecto://postgres:postgres@localhost:5432/shop_test
+
+jobs:
+  test:
+    name: Test (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - elixir: '1.16'
+            otp: '26'
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: shop_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d shop_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+
+      - name: Cache _build
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile --warnings-as-errors
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Run Credo
+        run: mix credo
+
+      # - name: Run Dialyzer
+      #   run: mix dialyzer
+      #   # Descomentar cuando se configure dialyzer
+
+      - name: Setup database
+        run: mix ecto.setup
+
+      - name: Build assets
+        run: mix assets.deploy
+
+      - name: Run tests
+        run: mix test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-${{ matrix.elixir }}-${{ matrix.otp }}
+          path: cover/
+
+  # Docker build test (solo main/develop)
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    needs: [test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          load: true
+          tags: shop:test
+          build-args: |
+            MIX_ENV=prod
+            SECRET_KEY_BASE=test_secret_key_base_for_build_only
+
+      - name: Test Docker image starts
+        run: |
+          docker run --rm -d --name shop_test -p 4000:4000 -e DATABASE_URL=ecto://postgres:postgres@host.docker.internal:5432/shop_test -e PHX_HOST=localhost -e SECRET_KEY_BASE=test_secret_key_base_for_build_only shop:test
+          sleep 10
+          curl -f http://localhost:4000/health || (docker logs shop_test && exit 1)
+          docker stop shop_test
