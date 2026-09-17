@@ -86,7 +86,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 
 # Usuario no-root para seguridad
 RUN groupadd -g 1000 app && \
-    useradd -u 1000 -g app -s /bin/bash -m app
+    useradd -u 1000 -g app -s /bin/bash -m -d /home/app app
 
 WORKDIR /app
 
