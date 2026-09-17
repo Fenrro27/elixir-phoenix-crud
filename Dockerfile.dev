@@ -1,0 +1,25 @@
+# Dockerfile para desarrollo (opcional, para parity con prod)
+FROM hexpm/elixir:1.16.3-erlang-26.2.5.21-ubuntu-noble-20260911
+
+# Instalar dependencias del sistema para desarrollo
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    nodejs \
+    npm \
+    python3 \
+    postgresql-client \
+    inotify-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar Hex + Rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+WORKDIR /app
+
+# Exponer puerto
+EXPOSE 4000
+
+# Comando por defecto (sobrescrito en docker-compose)
+CMD ["mix", "phx.server"]
