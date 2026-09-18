@@ -94,6 +94,19 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     needs: [test]
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: shop_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d shop_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -113,9 +126,22 @@ jobs:
             MIX_ENV=prod
             SECRET_KEY_BASE=test_secret_key_base_for_build_only
 
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres -d shop_test; then
+              echo "PostgreSQL is ready"
+              exit 0
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+          echo "PostgreSQL not ready after 60 seconds"
+          exit 1
+
       - name: Test Docker image starts
         run: |
-          docker run --rm -d --name shop_test -p 4000:4000 -e DATABASE_URL=ecto://postgres:postgres@host.docker.internal:5432/shop_test -e PHX_HOST=localhost -e SECRET_KEY_BASE=test_secret_key_base_for_build_only shop:test
+          docker run --rm -d --name shop_test --network host -e DATABASE_URL=ecto://postgres:postgres@localhost:5432/shop_test -e PHX_HOST=localhost -e SECRET_KEY_BASE="a_very_long_secret_key_base_that_is_at_least_64_characters_long_for_testing" -e PHX_SERVER=true shop:test
           sleep 10
-          curl -f http://localhost:4000/health || (docker logs shop_test && exit 1)
+          curl -f http://localhost:4000/ || (docker logs shop_test && exit 1)
           docker stop shop_test

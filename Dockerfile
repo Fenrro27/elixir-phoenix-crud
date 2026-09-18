@@ -47,14 +47,14 @@ RUN mix compile
 # ===== STAGE 2: Assets =====
 FROM builder AS assets
 
+# Instalar herramientas de assets (esbuild, tailwind)
+RUN mix assets.setup
+
 # Copiar assets
 COPY assets assets
 
-# Instalar dependencias de Node y compilar assets
-RUN cd assets && npm ci && npm run deploy
-
-# Compilar Phoenix digests
-RUN mix phx.digest
+# Compilar assets
+RUN mix assets.deploy
 
 # ===== STAGE 3: Release =====
 FROM builder AS release
@@ -85,8 +85,10 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Usuario no-root para seguridad
-RUN groupadd -g 1000 app && \
-    useradd -u 1000 -g app -s /bin/bash -m -d /home/app app
+RUN groupadd app 2>/dev/null || true && \
+    useradd -g app -s /bin/bash app 2>/dev/null || true && \
+    mkdir -p /home/app && \
+    chown -R app:app /home/app
 
 WORKDIR /app
 
