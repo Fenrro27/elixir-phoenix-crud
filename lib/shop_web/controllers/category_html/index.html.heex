@@ -10,6 +10,17 @@
 
 <.table id="categories" rows={@categories} row_click={&JS.navigate(~p"/categories/#{&1}")}>
   <:col :let={category} label="Posición">{category.position}</:col>
+  <:col :let={category} label="Imagen">
+    <%= if category.images != [] do %>
+      <img
+        src={Enum.at(category.images, 0)}
+        alt={category.name}
+        class="h-12 w-12 object-cover rounded"
+      />
+    <% else %>
+      <span class="text-zinc-400 text-sm">Sin imagen</span>
+    <% end %>
+  </:col>
   <:col :let={category} label="Nombre">
     <div class="font-semibold text-zinc-900">{category.name}</div>
   </:col>

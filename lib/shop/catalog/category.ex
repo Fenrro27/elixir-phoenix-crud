@@ -7,6 +7,7 @@ defmodule Shop.Catalog.Category do
     field :slug, :string
     field :description, :string
     field :position, :integer, default: 0
+    field :images, {:array, :string}, default: []
 
     belongs_to :parent, Shop.Catalog.Category
     has_many :children, Shop.Catalog.Category, foreign_key: :parent_id
@@ -18,7 +19,7 @@ defmodule Shop.Catalog.Category do
   @doc false
   def changeset(category, attrs) do
     category
-    |> cast(attrs, [:name, :slug, :description, :parent_id, :position])
+    |> cast(attrs, [:name, :slug, :description, :parent_id, :position, :images])
     |> validate_required([:name])
     |> generate_slug()
     |> validate_required([:slug])

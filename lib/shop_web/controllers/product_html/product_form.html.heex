@@ -55,6 +55,13 @@
     placeholder="Detalles, características y especificaciones del producto"
   />
 
+  <.input
+    field={f[:images]}
+    type="text"
+    label="Imágenes (URLs separadas por comas)"
+    placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+  />
+
   <.input field={f[:active]} type="checkbox" label="Producto Activo (visible en la tienda)" />
 
   <:actions>

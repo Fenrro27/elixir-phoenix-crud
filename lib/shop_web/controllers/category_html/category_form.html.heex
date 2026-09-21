@@ -23,6 +23,12 @@
     options={@categories}
   />
   <.input field={f[:position]} type="number" label="Posición / Orden" />
+  <.input
+    field={f[:images]}
+    type="text"
+    label="Imágenes (URLs separadas por comas)"
+    placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+  />
   <:actions>
     <.button>Guardar Categoría</.button>
   </:actions>

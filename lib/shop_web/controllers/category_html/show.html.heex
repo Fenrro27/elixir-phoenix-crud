@@ -8,6 +8,16 @@
   </:actions>
 </.header>
 
+<%= if @category.images != [] do %>
+  <div class="mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <%= for image <- @category.images do %>
+        <img src={image} alt={@category.name} class="h-32 w-full object-cover rounded-lg" />
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <.list>
   <:item title="Nombre">{@category.name}</:item>
   <:item title="Slug">
