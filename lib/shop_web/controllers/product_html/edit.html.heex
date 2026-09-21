@@ -1,0 +1,8 @@
+<.header>
+  Editar Producto: {@product.name}
+  <:subtitle>Actualiza el precio, inventario y características del producto</:subtitle>
+</.header>
+
+<.product_form changeset={@changeset} action={~p"/products/#{@product}"} categories={@categories} />
+
+<.back navigate={~p"/products"}>Volver a Productos</.back>

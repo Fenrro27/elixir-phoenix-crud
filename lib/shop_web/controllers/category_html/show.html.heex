@@ -1,0 +1,76 @@
+<.header>
+  Categoría: {@category.name}
+  <:subtitle>Detalle y productos vinculados a esta categoría</:subtitle>
+  <:actions>
+    <.link href={~p"/categories/#{@category}/edit"}>
+      <.button>Editar Categoría</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<%= if @category.images != [] do %>
+  <div class="mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <%= for image <- @category.images do %>
+        <img src={image} alt={@category.name} class="h-32 w-full object-cover rounded-lg" />
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<.list>
+  <:item title="Nombre">{@category.name}</:item>
+  <:item title="Slug">
+    <span class="rounded bg-zinc-100 px-2 py-0.5 font-mono text-xs text-zinc-700">
+      {@category.slug}
+    </span>
+  </:item>
+  <:item title="Descripción">{@category.description || "Sin descripción"}</:item>
+  <:item title="Posición">{@category.position}</:item>
+  <:item :if={@category.parent} title="Categoría Padre">
+    <.link
+      navigate={~p"/categories/#{@category.parent}"}
+      class="font-medium text-brand hover:underline"
+    >
+      {@category.parent.name}
+    </.link>
+  </:item>
+</.list>
+
+<div class="mt-12">
+  <div class="flex items-center justify-between border-b border-zinc-200 pb-4">
+    <h3 class="text-base font-semibold leading-7 text-zinc-900">
+      Productos en esta categoría ({length(@category.products)})
+    </h3>
+    <.link
+      href={~p"/products/new?category_id=#{@category.id}"}
+      class="text-sm font-semibold text-zinc-900 hover:text-zinc-700"
+    >
+      + Añadir Producto &rarr;
+    </.link>
+  </div>
+
+  <div :if={Enum.empty?(@category.products)} class="py-8 text-center text-sm text-zinc-500">
+    No hay productos registrados en esta categoría aún.
+  </div>
+
+  <.table
+    :if={not Enum.empty?(@category.products)}
+    id="category_products"
+    rows={@category.products}
+  >
+    <:col :let={product} label="Producto">{product.name}</:col>
+    <:col :let={product} label="Precio">${product.price}</:col>
+    <:col :let={product} label="Stock">{product.stock} u.</:col>
+    <:action :let={product}>
+      <.link
+        navigate={~p"/products/#{product}"}
+        class="font-semibold text-zinc-900 hover:text-zinc-700"
+      >
+        Ver Detalle
+      </.link>
+    </:action>
+  </.table>
+</div>
+
+<.back navigate={~p"/categories"}>Volver a Categorías</.back>

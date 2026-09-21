@@ -1,0 +1,35 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    ¡Ups! Algo salió mal. Por favor verifica los errores a continuación.
+  </.error>
+  <.input field={f[:name]} type="text" label="Nombre" placeholder="Ej: Electrónica" required />
+  <.input
+    field={f[:slug]}
+    type="text"
+    label="Slug (opcional, generado automáticamente si se deja vacío)"
+    placeholder="ej: electronica"
+  />
+  <.input
+    field={f[:description]}
+    type="textarea"
+    label="Descripción"
+    placeholder="Breve descripción de la categoría"
+  />
+  <.input
+    field={f[:parent_id]}
+    type="select"
+    label="Categoría Padre (opcional)"
+    prompt="Ninguna (Categoría principal)"
+    options={@categories}
+  />
+  <.input field={f[:position]} type="number" label="Posición / Orden" />
+  <.input
+    field={f[:images]}
+    type="text"
+    label="Imágenes (URLs separadas por comas)"
+    placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+  />
+  <:actions>
+    <.button>Guardar Categoría</.button>
+  </:actions>
+</.simple_form>

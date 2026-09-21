@@ -1,0 +1,70 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    ¡Ups! Algo salió mal. Por favor verifica los errores a continuación.
+  </.error>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <.input
+      field={f[:name]}
+      type="text"
+      label="Nombre del Producto"
+      placeholder="Ej: Teclado Mecánico RGB"
+      required
+    />
+    <.input
+      field={f[:slug]}
+      type="text"
+      label="Slug (opcional, auto-generado)"
+      placeholder="ej: teclado-mecanico-rgb"
+    />
+  </div>
+
+  <.input
+    field={f[:category_id]}
+    type="select"
+    label="Categoría"
+    prompt="-- Selecciona una categoría --"
+    options={@categories}
+    required
+  />
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <.input
+      field={f[:price]}
+      type="number"
+      step="0.01"
+      min="0.01"
+      label="Precio ($ USD)"
+      placeholder="99.99"
+      required
+    />
+    <.input
+      field={f[:stock]}
+      type="number"
+      min="0"
+      label="Cantidad en Stock"
+      placeholder="10"
+      required
+    />
+  </div>
+
+  <.input
+    field={f[:description]}
+    type="textarea"
+    label="Descripción"
+    placeholder="Detalles, características y especificaciones del producto"
+  />
+
+  <.input
+    field={f[:images]}
+    type="text"
+    label="Imágenes (URLs separadas por comas)"
+    placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"
+  />
+
+  <.input field={f[:active]} type="checkbox" label="Producto Activo (visible en la tienda)" />
+
+  <:actions>
+    <.button>Guardar Producto</.button>
+  </:actions>
+</.simple_form>
