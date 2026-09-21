@@ -55,6 +55,7 @@ defmodule ShopWeb do
         layout: {ShopWeb.Layouts, :app}
 
       unquote(html_helpers())
+      import ShopWeb.Components.ProductCard
     end
   end
 

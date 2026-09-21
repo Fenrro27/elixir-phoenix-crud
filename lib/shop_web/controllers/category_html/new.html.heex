@@ -1,0 +1,8 @@
+<.header>
+  Nueva Categoría
+  <:subtitle>Crea una nueva categoría para organizar los productos de la tienda</:subtitle>
+</.header>
+
+<.category_form changeset={@changeset} action={~p"/categories"} categories={@categories} />
+
+<.back navigate={~p"/categories"}>Volver a Categorías</.back>

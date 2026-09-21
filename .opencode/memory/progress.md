@@ -1,8 +1,8 @@
 # Progreso del Proyecto
 
-> **Actualizado:** 2025-09-17
+> **Actualizado:** 2025-09-21
 > **Versión actual:** v0.0.0 (pre-v1.0.0)
-> **Branch actual:** `feature/project-setup` (CI passing ✅, PR listo para merge a `develop`)
+> **Branch actual:** `feature/product-catalog` (completada ✅, tests passing 56/56)
 
 ---
 
@@ -24,8 +24,8 @@
 | Feature Branch | Estado | Descripción | Tasks |
 |----------------|--------|-------------|-------|
 | `feature/project-setup` | ✅ **COMPLETADA** | Phoenix new + Docker + CI + Config base | [x] AGENTS.md, [x] docker-compose, [x] Dockerfile, [x] CI, [x] Memory files, [x] mix phx.new, [x] Gitflow setup, [x] PR creado, [x] **CI passing** |
-| `feature/product-catalog` | 🟡 **SIGUIENTE** | Category/Product CRUD + LiveView Index/Show + Filtros | [ ] Migraciones, [ ] Context Catalog, [ ] LiveViews, [ ] Components, [ ] Tests |
-| `feature/shopping-cart` | ⏳ Pendiente | Cart session/DB + Drawer component + Persistencia | [ ] Cart context, [ ] LiveView Drawer, [ ] Session handling, [ ] Tests |
+| `feature/product-catalog` | ✅ **COMPLETADA** | Category/Product CRUD + LiveView Index/Show + Filtros | [x] Migraciones, [x] Context Catalog, [x] LiveViews, [x] Components, [x] Tests (56 passing) |
+| `feature/shopping-cart` | 🟡 **SIGUIENTE** | Cart session/DB + Drawer component + Persistencia | [ ] Cart context, [ ] LiveView Drawer, [ ] Session handling, [ ] Tests |
 | `feature/checkout-flow` | ⏳ Pendiente | Multi-step: Address → Payment(Mock) → Confirm → Success | [ ] Checkout context, [ ] Multi-step LiveView, [ ] Mock payments, [ ] Tests |
 | `feature/order-management` | ⏳ Pendiente | Order creation + Email mock + Success page | [ ] Orders context, [ ] Success LiveView, [ ] Email adapter, [ ] Tests |
 
@@ -34,9 +34,9 @@
 - [x] **Proyecto Phoenix** inicializado y compila (`mix compile` ✅)
 - [x] **Docker** PostgreSQL configurado (`docker-compose.yml` ✅)
 - [x] **CI/CD** configurado en GitHub Actions (`.github/workflows/ci.yml` ✅)
-- [x] **Formato/Lint**: `mix format` ✅, `mix credo` ✅ (3 design suggestions menores)
+- [x] **Formato/Lint**: `mix format` ✅, `mix credo` ✅ (0 issues)
 - [x] **CI passing** en GitHub Actions
-- [ ] **Catálogo**: Listar productos, filtrar por categoría, buscar, ver detalle
+- [x] **Catálogo**: Listar productos, filtrar por categoría, buscar, ver detalle
 - [ ] **Carrito**: Añadir/quitar/actualizar cantidades, persistir sesión, drawer UI
 - [ ] **Checkout**: 3 pasos (Dirección → Pago Mock → Confirmar), validaciones
 - [ ] **Pedido**: Crear order + items, stock decrement, success page
@@ -66,22 +66,38 @@
 - ✅ PR creado: https://github.com/Fenrro27/elixir-phoenix-crud/pull/new/feature/project-setup
 - ✅ **CI passing** en GitHub Actions (Elixir 1.16, OTP 26, Node 24, Ubuntu noble)
 
+### 2025-09-21 - Sesión 2: Product Catalog Implementation
+- ✅ Migraciones: `create_categories` + `create_products` con índices, FKs, categorías jerárquicas
+- ✅ Context `Shop.Catalog` con CRUD completo + filtros/búsqueda/ordenamiento
+- ✅ Schemas `Category`/`Product` con changesets, validaciones, slugs auto-generados
+- ✅ Controllers `CategoryController` + `ProductController` (CRUD completo)
+- ✅ Templates HEEx para controllers (index, show, new, edit, form)
+- ✅ Seeds con 4 categorías y 10 productos de muestra
+- ✅ Tests: 40 tests pasando (context + controllers)
+- ✅ **LiveView `ProductLive.Index`** - Listado con streams, filtros reactivos (búsqueda, categoría, ordenamiento), handle_params para URLs compartibles
+- ✅ **LiveView `ProductLive.Show`** - Detalle con galería de imágenes, stock badge, productos relacionados
+- ✅ **Componente `ProductCard`** - Variantes `:card` (grid) y `:compact` (relacionados)
+- ✅ **Router actualizado** - Rutas LiveView públicas (`live "/", ProductLive.Index` y `live "/p/:slug", ProductLive.Show`)
+- ✅ **Tests LiveView**: 16 tests pasando (Index, Show, ProductCard component)
+- ✅ **Tests totales**: 56 passing (0 failures)
+- ✅ `mix format` ✅, `mix credo` ✅ (0 issues)
+- ✅ `mix test` ✅ 56/56 passing
+
 ---
 
 ## Próximas Acciones Inmediatas
 
-1. **Merge PR** `feature/project-setup` → `develop` en GitHub
-2. **Crear branch** `feature/product-catalog` desde `develop`
-3. **Iniciar migraciones** para categories + products
-4. **Implementar Context Catalog** con CRUD básico
-5. **Crear LiveViews** ProductLive.Index + ProductLive.Show
+1. **Merge PR** `feature/product-catalog` → `develop` en GitHub
+2. **Crear branch** `feature/shopping-cart` desde `develop`
+3. **Implementar Cart context** + LiveView Drawer component
+4. **Session handling** para carrito anónimo + persistencia en BD al login
 
 ---
 
 ## Notas para Próxima Sesión
 
-- **Merge PR** `feature/project-setup` → `develop` en GitHub (CI verde ✅)
+- **Merge PR** `feature/product-catalog` → `develop` en GitHub
 - **El usuario debe iniciar Docker** manualmente: `docker-compose up -d` (Docker daemon no disponible en entorno actual)
 - **Generar SECRET_KEY_BASE**: `mix phx.gen.secret` y añadir a `.env`
 - **Verificar localmente**: `docker-compose up -d` → `mix ecto.setup` → `mix phx.server`
-- **Siguiente feature**: `feature/product-catalog` - empezar con migración de categories
+- **Siguiente feature**: `feature/shopping-cart` - Cart context + LiveView Drawer
