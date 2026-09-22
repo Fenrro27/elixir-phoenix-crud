@@ -1,0 +1,185 @@
+<.header>
+  Catálogo de Productos
+  <:subtitle>Explora, busca y filtra el inventario de la tienda</:subtitle>
+  <:actions>
+    <.link href={~p"/products/new"}>
+      <.button>+ Nuevo Producto</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<!-- Barra de Búsqueda y Filtros -->
+<div class="my-8 rounded-xl border border-zinc-200 bg-zinc-50/70 p-4 shadow-sm">
+  <form
+    phx-change="validate"
+    phx-submit="filter"
+    class="flex flex-col gap-4 sm:flex-row sm:items-end"
+  >
+    <input type="hidden" name="sort" value={@sort_by} />
+
+    <div class="flex-1">
+      <label
+        for="search"
+        class="block text-xs font-medium uppercase tracking-wider text-zinc-600 mb-1"
+      >
+        Buscar Producto
+      </label>
+      <input
+        type="text"
+        name="search"
+        id="search"
+        value={@search_query}
+        placeholder="Buscar por nombre o descripción..."
+        phx-debounce="300"
+        class="block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-zinc-900 focus:ring-zinc-900"
+      />
+    </div>
+
+    <div class="w-full sm:w-64">
+      <label
+        for="category_id"
+        class="block text-xs font-medium uppercase tracking-wider text-zinc-600 mb-1"
+      >
+        Filtrar por Categoría
+      </label>
+      <select
+        name="category_id"
+        id="category_id"
+        phx-debounce="300"
+        class="block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-zinc-900 focus:ring-zinc-900"
+      >
+        <option value="">Todas las categorías</option>
+        <%= for category <- @categories do %>
+          <option value={category.id} selected={to_string(category.id) == @selected_category_id}>
+            {category.name}
+          </option>
+        <% end %>
+      </select>
+    </div>
+
+    <div class="w-full sm:w-48">
+      <label
+        for="sort"
+        class="block text-xs font-medium uppercase tracking-wider text-zinc-600 mb-1"
+      >
+        Ordenar por
+      </label>
+      <select
+        name="sort"
+        id="sort"
+        phx-debounce="300"
+        class="block w-full rounded-lg border-zinc-300 text-sm shadow-sm focus:border-zinc-900 focus:ring-zinc-900"
+      >
+        <option value="newest" selected={@sort_by == "newest"}>Más nuevos</option>
+        <option value="price_asc" selected={@sort_by == "price_asc"}>
+          Precio: menor a mayor
+        </option>
+        <option value="price_desc" selected={@sort_by == "price_desc"}>
+          Precio: mayor a menor
+        </option>
+        <option value="name" selected={@sort_by == "name"}>Nombre (A-Z)</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <%= if @selected_category_id != "" or @search_query != "" do %>
+        <.link
+          phx-click="clear_filters"
+          class="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 transition"
+        >
+          Limpiar
+        </.link>
+      <% end %>
+    </div>
+  </form>
+</div>
+
+<%= if Enum.empty?(@products_list) do %>
+  <div class="rounded-2xl border-2 border-dashed border-zinc-200 p-12 text-center">
+    <svg
+      class="mx-auto h-12 w-12 text-zinc-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1.5"
+        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+      />
+    </svg>
+    <h3 class="mt-2 text-sm font-semibold text-zinc-900">No se encontraron productos</h3>
+    <p class="mt-1 text-sm text-zinc-500">
+      Prueba ajustando los filtros de búsqueda o agrega un nuevo producto.
+    </p>
+    <div class="mt-6">
+      <.link href={~p"/products/new"}>
+        <.button>Crear Primer Producto</.button>
+      </.link>
+    </div>
+  </div>
+<% else %>
+  <!-- Vista de Tarjetas / Vitrina -->
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
+    <%= for {dom_id, product} <- @streams.products do %>
+      <div id={dom_id} phx-update="ignore">
+        <.product_card product={product} variant={:card} />
+      </div>
+    <% end %>
+  </div>
+  
+<!-- Vista Administrativa (Tabla) -->
+  <div class="mt-12">
+    <div class="border-t border-zinc-200 pt-8 mb-4">
+      <h3 class="text-base font-semibold leading-7 text-zinc-900">
+        Inventario y Gestión (Vista Tabla)
+      </h3>
+      <p class="text-xs text-zinc-500">
+        Listado detallado para control de stock, precios y estado activo.
+      </p>
+    </div>
+
+    <.table
+      id="products_table"
+      rows={@streams.products}
+      row_click={fn {_id, product} -> JS.navigate(~p"/products/#{product.id}") end}
+      row_item={fn {_id, product} -> product end}
+    >
+      <:col :let={product} label="Nombre">
+        <div class="font-medium text-zinc-900">{product.name}</div>
+        <div class="text-xs text-zinc-500 font-mono">{product.slug}</div>
+      </:col>
+      <:col :let={product} label="Categoría">{product.category.name}</:col>
+      <:col :let={product} label="Precio">{ShopWeb.ProductHTML.format_price(product.price)}</:col>
+      <:col :let={product} label="Stock">
+        <ShopWeb.ProductHTML.stock_badge stock={product.stock} />
+      </:col>
+      <:col :let={product} label="Activo">
+        <%= if product.active do %>
+          <span class="text-xs font-medium text-emerald-600">✓ Activo</span>
+        <% else %>
+          <span class="text-xs font-medium text-zinc-400">Inactivo</span>
+        <% end %>
+      </:col>
+      <:action :let={product}>
+        <.link
+          navigate={~p"/products/#{product.id}/edit"}
+          class="font-semibold text-zinc-900 hover:text-zinc-700"
+        >
+          Editar
+        </.link>
+      </:action>
+      <:action :let={product}>
+        <.link
+          href={~p"/products/#{product.id}"}
+          method="delete"
+          data-confirm="¿Seguro que deseas eliminar este producto?"
+          class="font-semibold text-rose-600 hover:text-rose-800"
+        >
+          Eliminar
+        </.link>
+      </:action>
+    </.table>
+  </div>
+<% end %>

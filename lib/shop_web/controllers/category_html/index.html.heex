@@ -1,0 +1,54 @@
+<.header>
+  Categorías
+  <:subtitle>Gestiona la taxonomía y organización de productos de la tienda</:subtitle>
+  <:actions>
+    <.link href={~p"/categories/new"}>
+      <.button>+ Nueva Categoría</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="categories" rows={@categories} row_click={&JS.navigate(~p"/categories/#{&1}")}>
+  <:col :let={category} label="Posición">{category.position}</:col>
+  <:col :let={category} label="Imagen">
+    <%= if category.images != [] do %>
+      <img
+        src={Enum.at(category.images, 0)}
+        alt={category.name}
+        class="h-12 w-12 object-cover rounded"
+      />
+    <% else %>
+      <span class="text-zinc-400 text-sm">Sin imagen</span>
+    <% end %>
+  </:col>
+  <:col :let={category} label="Nombre">
+    <div class="font-semibold text-zinc-900">{category.name}</div>
+  </:col>
+  <:col :let={category} label="Slug">
+    <span class="rounded bg-zinc-100 px-2 py-0.5 font-mono text-xs text-zinc-700">
+      {category.slug}
+    </span>
+  </:col>
+  <:col :let={category} label="Descripción">{category.description || "-"}</:col>
+  <:action :let={category}>
+    <div class="sr-only">
+      <.link navigate={~p"/categories/#{category}"}>Ver</.link>
+    </div>
+    <.link
+      navigate={~p"/categories/#{category}/edit"}
+      class="font-semibold text-zinc-900 hover:text-zinc-700"
+    >
+      Editar
+    </.link>
+  </:action>
+  <:action :let={category}>
+    <.link
+      href={~p"/categories/#{category}"}
+      method="delete"
+      data-confirm="¿Estás seguro de que deseas eliminar esta categoría?"
+      class="font-semibold text-rose-600 hover:text-rose-800"
+    >
+      Eliminar
+    </.link>
+  </:action>
+</.table>

@@ -1,0 +1,8 @@
+<.header>
+  Nuevo Producto
+  <:subtitle>Ingresa los detalles para dar de alta un producto en la tienda</:subtitle>
+</.header>
+
+<.product_form changeset={@changeset} action={~p"/products"} categories={@categories} />
+
+<.back navigate={~p"/products"}>Volver a Productos</.back>

@@ -1,0 +1,12 @@
+<.header>
+  Editar Categoría: {@category.name}
+  <:subtitle>Modifica los datos y ajustes de esta categoría</:subtitle>
+</.header>
+
+<.category_form
+  changeset={@changeset}
+  action={~p"/categories/#{@category}"}
+  categories={@categories}
+/>
+
+<.back navigate={~p"/categories"}>Volver a Categorías</.back>
